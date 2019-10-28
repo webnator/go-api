@@ -1,4 +1,4 @@
-package apis
+package controllers
 
 import (
 	"github.com/webnator/capo-music-api/cmd/capo-music/test_data"

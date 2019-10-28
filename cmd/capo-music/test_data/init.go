@@ -2,18 +2,19 @@ package test_data
 
 import (
 	"fmt"
-	"github.com/webnator/capo-music-api/cmd/capo-music/config"
-	"github.com/webnator/capo-music-api/cmd/capo-music/models"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"io/ioutil"
 	"strings"
+
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"github.com/webnator/capo-music-api/cmd/capo-music/config"
+	"github.com/webnator/capo-music-api/cmd/capo-music/models"
 )
 
 // Initializes application config and SQLite database used for testing
 func init() {
 	// the test may be started from the home directory or a subdirectory
-	err := config.LoadConfig("/config") // on host use absolute path
+	err := config.LoadConfig() // on host use absolute path
 	if err != nil {
 		panic(err)
 	}

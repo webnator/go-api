@@ -4,10 +4,9 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
-	"github.com/webnator/capo-music-api/cmd/capo-music/apis"
 	"github.com/webnator/capo-music-api/cmd/capo-music/config"
-	"github.com/webnator/capo-music-api/cmd/capo-music/services"
+	"github.com/webnator/capo-music-api/cmd/capo-music/controllers"
+	"github.com/webnator/capo-music-api/cmd/capo-music/services/db"
 
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -45,27 +44,9 @@ func main() {
 
 	v1 := r.Group("/api/v1")
 	{
-		v1.GET("/users/:id", apis.GetUser)
+		v1.GET("/users/:id", controllers.GetUser)
 	}
-
-	// config.Config.DB, config.Config.DBErr = gorm.Open("postgres", config.Config.DSN)
-	// if config.Config.DBErr != nil {
-	// 	panic(config.Config.DBErr)
-	// }
-
-	// // config.Config.DB.AutoMigrate(&models.User{}) // This is needed for generation of schema for postgres image.
-
-	// defer config.Config.DB.Close()
-
-	// log.Println("Successfully connected to database")
-
-	// log.Println(config.Config.TestVal)
-
-	// log.Println(services.DBName)
-	services.Connect()
-	services.GetAll("test")
+	db.Connect()
 
 	r.Run(fmt.Sprintf(":%v", config.Config.ServerPort))
-
-
 }

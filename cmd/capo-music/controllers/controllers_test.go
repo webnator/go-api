@@ -1,15 +1,16 @@
-package apis
+package controllers
 
 import (
 	"bytes"
-	"github.com/webnator/capo-music-api/cmd/capo-music/config"
-	"github.com/webnator/capo-music-api/cmd/capo-music/test_data"
-	"github.com/gin-gonic/gin"
-	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
+	"github.com/webnator/capo-music-api/cmd/capo-music/config"
+	"github.com/webnator/capo-music-api/cmd/capo-music/test_data"
 )
 
 type apiTestCase struct {
