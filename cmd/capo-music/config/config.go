@@ -27,11 +27,6 @@ func LoadConfig() error {
 	v.SetConfigType("json")
 	v.AutomaticEnv()
 
-	v.SetDefault("server_port", 1234)
-
-	// for _, path := range configPaths {
-	// 	v.AddConfigPath(path)
-	// }
 	if err := v.ReadInConfig(); err != nil {
 		return fmt.Errorf("failed to read the configuration file: %s", err)
 	}

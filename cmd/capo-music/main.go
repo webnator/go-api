@@ -7,6 +7,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/webnator/capo-music-api/cmd/capo-music/apis"
 	"github.com/webnator/capo-music-api/cmd/capo-music/config"
+	"github.com/webnator/capo-music-api/cmd/capo-music/services"
 
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -60,5 +61,11 @@ func main() {
 
 	// log.Println(config.Config.TestVal)
 
+	// log.Println(services.DBName)
+	services.Connect()
+	services.GetAll("test")
+
 	r.Run(fmt.Sprintf(":%v", config.Config.ServerPort))
+
+
 }

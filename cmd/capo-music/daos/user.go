@@ -27,9 +27,7 @@ func (dao *UserDAO) Get(id uint) (*models.User, error) {
 	//	Email: "martin7.heinz@gmail.com"}
 
 	// if using Gorm:
-	err := config.Config.DB.Where("id = ?", id).
-		First(&user).
-		Error
+	err := config.Config.DB.Where("id = ?", id).First(&user).Error
 
 	return &user, err
 }
