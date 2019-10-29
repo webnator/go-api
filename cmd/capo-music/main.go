@@ -45,6 +45,7 @@ func main() {
 	v1 := r.Group("/api/v1")
 	{
 		v1.GET("/users/:id", controllers.GetUser)
+		v1.GET("/songs", controllers.GetSongs)
 	}
 	db.Connect()
 

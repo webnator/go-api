@@ -27,7 +27,7 @@ func Connect() {
 		return
 	}
 	db = client.Database(DBName)
-	fmt.Println("Conneceted to DB: ", db.Name()) // output: glottery
+	fmt.Println("Connected to DB: ", db.Name()) // output: glottery
 }
 
 func GetAll(collection string) ([]bson.M, error) {

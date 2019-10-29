@@ -3,11 +3,9 @@ package controllers
 import (
 	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/webnator/capo-music-api/cmd/capo-music/daos"
-	"github.com/webnator/capo-music-api/cmd/capo-music/services"
+	"github.com/webnator/capo-music-api/cmd/capo-music/songs"
 )
 
 // GetSongs godoc
@@ -17,12 +15,10 @@ import (
 // @Success 200 {object} models.User
 // @Router /songs/{id} [get]
 func GetSongs(context *gin.Context) {
-	s := services.NewUserService(daos.NewUserDAO())
-	id, _ := strconv.ParseUint(context.Param("id"), 10, 32)
-	if user, err := s.Get(uint(id)); err != nil {
+	if songs, err := songs.GetAll(); err != nil {
 		context.AbortWithStatus(http.StatusNotFound)
 		log.Println(err)
 	} else {
-		context.JSON(http.StatusOK, user)
+		context.JSON(http.StatusOK, songs)
 	}
 }
