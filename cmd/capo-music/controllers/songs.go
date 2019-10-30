@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/webnator/capo-music-api/cmd/capo-music/services/db"
 	"github.com/webnator/capo-music-api/cmd/capo-music/songs"
 )
 
@@ -15,7 +16,8 @@ import (
 // @Success 200 {object} models.User
 // @Router /songs/{id} [get]
 func GetSongs(context *gin.Context) {
-	if songs, err := songs.GetAll(); err != nil {
+	service := songs.NewSongService(songs.Deps{db.Service()})
+	if songs, err := service.GetAll(); err != nil {
 		context.AbortWithStatus(http.StatusNotFound)
 		log.Println(err)
 	} else {

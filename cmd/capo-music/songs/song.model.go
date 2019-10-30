@@ -1,10 +1,16 @@
 package songs
 
-// SongModel represents the song entity in the db.
+// NewSongModel represents the song entity in the db.
+func NewSongModel() SongModel {
+	song := SongModel{}
+	song.Category = make([]string, 0)
+	return song
+}
+
 type SongModel struct {
 	Title    string      `json:"title"`
 	Slug     string      `json:"slug"`
-	Visible  bool        `json:"visible"`
+	Hidden   bool        `json:"hidden"`
 	Lyrics   string      `json:"lyrics"`
 	Category []string    `json:"category"`
 	Media    mediaModel  `json:"media"`

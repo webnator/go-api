@@ -3,20 +3,21 @@ package config
 import (
 	"fmt"
 
-	"github.com/jinzhu/gorm"
 	"github.com/spf13/viper"
 )
 
 // Config is global object that holds all application level variables.
 var Config appConfig
 
+type DBConfig struct {
+	DBName string `mapstructure:"database"`
+	Host   string `mapstructure:"host"`
+	Port   string `mapstructure:"port"`
+}
 type appConfig struct {
-	// the shared DB ORM object
-	DB *gorm.DB
-	// the error thrown be GORM when using DB ORM object
-	DBErr error
 	// the server port. Defaults to 8080
-	ServerPort int `mapstructure:"server_port"`
+	ServerPort int      `mapstructure:"server_port"`
+	DBConfig   DBConfig `mapstructure:"mongo"`
 }
 
 // LoadConfig loads config from files
