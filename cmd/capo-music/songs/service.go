@@ -1,15 +1,11 @@
 package songs
 
-type songsDAO interface {
-	getAll() (*[]SongModel, error)
-}
-
 type Deps struct {
 	DB DBLibrary
 }
 
 type SongService struct {
-	dao songsDAO
+	dao *SongDAO
 }
 
 func NewSongService(deps Deps) *SongService {
@@ -17,7 +13,12 @@ func NewSongService(deps Deps) *SongService {
 	return &SongService{dao}
 }
 
-// GetAll retrieves all songs in the DB.
-func (this *SongService) GetAll() (*[]SongModel, error) {
-	return this.dao.getAll()
+// Find retrieves all songs in the DB.
+func (this *SongService) Find(search string) (*[]SongModel, error) {
+	return this.dao.find(search)
+}
+
+// FindSongBySlug retrieves a specific song in the DB
+func (this *SongService) FindSongBySlug(slug string) (*SongModel, error) {
+	return this.dao.findByKey(map[string]string{"slug": slug})
 }

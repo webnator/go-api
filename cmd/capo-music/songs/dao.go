@@ -15,12 +15,18 @@ func NewSongDAO(dbLib DBLibrary) *SongDAO {
 	return &SongDAO{db}
 }
 
-// Get does the actual query to database, if user with specified id is not found error is returned
-func (dao *SongDAO) getAll() (*[]SongModel, error) {
+func (dao *SongDAO) find(search string) (*[]SongModel, error) {
 	var songs []SongModel = make([]SongModel, 0)
 
-	// Query Database here...
-	results, err := dao.db.GetAll("songs")
+	query := bson.M{}
+	if search != "" {
+		query = bson.M{
+			"$text": bson.M{
+				"$search": search,
+			},
+		}
+	}
+	results, err := dao.db.Find("songs", query)
 
 	for _, song := range results {
 		var s SongModel = NewSongModel()
@@ -31,4 +37,21 @@ func (dao *SongDAO) getAll() (*[]SongModel, error) {
 	}
 
 	return &songs, err
+}
+
+func (dao *SongDAO) findByKey(query map[string]string) (*SongModel, error) {
+	bsonQuery := bson.M{}
+	bsonQueryBytes, _ := bson.Marshal(query)
+	bson.Unmarshal(bsonQueryBytes, &bsonQuery)
+
+	result, err := dao.db.FindOne("songs", bsonQuery)
+
+	if result == nil {
+		return nil, nil
+	}
+	var song SongModel
+	bsonBytes, _ := bson.Marshal(result)
+	bson.Unmarshal(bsonBytes, &song)
+
+	return &song, err
 }

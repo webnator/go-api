@@ -5,5 +5,7 @@ import (
 )
 
 type DBLibrary interface {
-	GetAll(string) ([]bson.M, error)
+	FindAll(string) ([]bson.M, error)
+	Find(string, bson.M) ([]bson.M, error)
+	FindOne(string, bson.M) (bson.M, error)
 }

@@ -45,7 +45,9 @@ func main() {
 	v1 := r.Group("/api/v1")
 	{
 		v1.GET("/songs", controllers.GetSongs)
+		v1.GET("/songs/:slug", controllers.GetSong)
 	}
+
 	db.Connect(db.ConnOptions{
 		DBName: config.Config.DBConfig.DBName,
 		Host:   config.Config.DBConfig.Host,
