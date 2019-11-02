@@ -19,6 +19,7 @@ require (
 	github.com/spf13/viper v1.4.0
 	github.com/sqs/goreturns v0.0.0-20181028201513-538ac6014518 // indirect
 	github.com/stretchr/testify v1.4.0
+	github.com/stvp/slug v0.0.0-20150928221549-5ab8191bb1fe
 	github.com/swaggo/files v0.0.0-20190704085106-630677cd5c14
 	github.com/swaggo/gin-swagger v1.2.0
 	github.com/swaggo/swag v1.6.3

@@ -44,8 +44,14 @@ func main() {
 
 	v1 := r.Group("/api/v1")
 	{
+		v1.GET("/categories", controllers.GetCategories)
+
+		v1.POST("/songs", controllers.AddSong)
 		v1.GET("/songs", controllers.GetSongs)
 		v1.GET("/songs/:slug", controllers.GetSong)
+		v1.PATCH("/songs/:slug", controllers.UpdateSong)
+
+		v1.POST("/reset-views", controllers.ResetViews)
 	}
 
 	db.Connect(db.ConnOptions{

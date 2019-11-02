@@ -63,14 +63,6 @@ func (dbService *DbService) Find(collection string, query bson.M) ([]bson.M, err
 	return results, nil
 }
 
-func (dbService *DbService) getColl(collection string) *mongo.Collection {
-	if dbService.db == nil {
-		panic("DB connection not initialized")
-	}
-	ctx = context.Background()
-	return dbService.db.Collection(collection)
-}
-
 func (dbService *DbService) FindOne(collection string, query bson.M) (bson.M, error) {
 	coll := dbService.getColl(collection)
 
@@ -83,4 +75,70 @@ func (dbService *DbService) FindOne(collection string, query bson.M) (bson.M, er
 	}
 
 	return result, nil
+}
+
+func (dbService *DbService) Insert(collection string, record interface{}) error {
+	coll := dbService.getColl(collection)
+
+	_, err := coll.InsertOne(ctx, record)
+
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	return nil
+}
+
+func (dbService *DbService) UpdateOne(collection string, record interface{}, newInfo interface{}) error {
+	coll := dbService.getColl(collection)
+
+	_, err := coll.UpdateOne(ctx, record, newInfo)
+
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	return nil
+}
+
+func (dbService *DbService) DeleteMany(collection string, filter interface{}) (*mongo.DeleteResult, error) {
+	coll := dbService.getColl(collection)
+
+	res, err := coll.DeleteMany(ctx, filter)
+
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	return res, nil
+}
+
+func (dbService *DbService) Aggregate(collection string, pipeQuery []bson.M) ([]bson.M, error) {
+	coll := dbService.getColl(collection)
+
+	results := []bson.M{}
+	cursor, err := coll.Aggregate(ctx, pipeQuery)
+
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	for cursor.Next(ctx) {
+		var result bson.M
+		cursor.Decode(&result)
+		results = append(results, result)
+	}
+	return results, nil
+}
+
+func (dbService *DbService) getColl(collection string) *mongo.Collection {
+	if dbService.db == nil {
+		panic("DB connection not initialized")
+	}
+	ctx = context.Background()
+	return dbService.db.Collection(collection)
 }
