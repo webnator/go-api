@@ -16,8 +16,9 @@ type DBConfig struct {
 }
 type appConfig struct {
 	// the server port. Defaults to 8080
-	ServerPort int      `mapstructure:"server_port"`
-	DBConfig   DBConfig `mapstructure:"mongo"`
+	ServerPort  int               `mapstructure:"server_port"`
+	DBConfig    DBConfig          `mapstructure:"mongo"`
+	Collections map[string]string `mapstructure:"collections"`
 }
 
 // LoadConfig loads config from files

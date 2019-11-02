@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/webnator/capo-music-api/cmd/capo-music/config"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -37,7 +38,8 @@ func (dao *SongDAO) find(params map[string]string) (*[]SongModel, error) {
 	var songs []SongModel = make([]SongModel, 0)
 
 	query := queryModel(params)
-	results, err := dao.db.Find("songs", query)
+	songCollection := config.Config.Collections["songs"]
+	results, err := dao.db.Find(songCollection, query)
 
 	for _, song := range results {
 		var s SongModel = NewSongModel()
@@ -55,7 +57,8 @@ func (dao *SongDAO) findByKey(query map[string]string) (*SongModel, error) {
 	bsonQueryBytes, _ := bson.Marshal(query)
 	bson.Unmarshal(bsonQueryBytes, &bsonQuery)
 
-	result, err := dao.db.FindOne("songs", bsonQuery)
+	songCollection := config.Config.Collections["songs"]
+	result, err := dao.db.FindOne(songCollection, bsonQuery)
 
 	if result == nil {
 		return nil, nil
@@ -75,7 +78,8 @@ func (dao *SongDAO) getCategories() ([]string, error) {
 		{"$group": bson.M{"_id": "$category"}},
 	}
 
-	results, err := dao.db.Aggregate("songs", bsonQuery)
+	songCollection := config.Config.Collections["songs"]
+	results, err := dao.db.Aggregate(songCollection, bsonQuery)
 
 	for _, category := range results {
 		categories = append(categories, category["_id"].(string))
@@ -85,22 +89,26 @@ func (dao *SongDAO) getCategories() ([]string, error) {
 }
 
 func (dao *SongDAO) storeSongInfo(song SongModel) error {
-	err := dao.db.Insert("songs", song)
+	songCollection := config.Config.Collections["songs"]
+	err := dao.db.Insert(songCollection, song)
 	return err
 }
 
 func (dao *SongDAO) updateSongInfo(slug string, song SongUpdateModel) error {
-	err := dao.db.UpdateOne("songs", bson.M{"slug": slug}, bson.M{"$set": song})
+	songCollection := config.Config.Collections["songs"]
+	err := dao.db.UpdateOne(songCollection, bson.M{"slug": slug}, bson.M{"$set": song})
 	return err
 }
 
 func (dao *SongDAO) addViewToSong(slug string) error {
-	err := dao.db.UpdateOne("songs", bson.M{"slug": slug}, bson.M{"$inc": bson.M{"viewed": 1}})
+	songCollection := config.Config.Collections["songs"]
+	viewCountCollection := config.Config.Collections["view_count"]
+	err := dao.db.UpdateOne(songCollection, bson.M{"slug": slug}, bson.M{"$inc": bson.M{"viewed": 1}})
 	if err != nil {
 		fmt.Println("Failed to register view to song")
 		return err
 	}
-	err = dao.db.Insert("view_count", bson.M{
+	err = dao.db.Insert(viewCountCollection, bson.M{
 		"time": time.Now(),
 		"song": slug,
 	})
@@ -136,6 +144,7 @@ func timeModel(date string, filter bson.M, key string) bson.M {
 }
 
 func (dao *SongDAO) getSlugsToReset(params ResetViewsModel) []string {
+	viewCountCollection := config.Config.Collections["view_count"]
 	var slugs []string
 	if params.Slug == "" {
 
@@ -143,7 +152,7 @@ func (dao *SongDAO) getSlugsToReset(params ResetViewsModel) []string {
 			{"$match": resetFilterModel("", params)},
 			{"$group": bson.M{"_id": "$song"}},
 		}
-		results, err := dao.db.Aggregate("view_count", bsonQuery)
+		results, err := dao.db.Aggregate(viewCountCollection, bsonQuery)
 
 		if err != nil {
 			fmt.Println("Failed to fetch slugs in views")
@@ -161,14 +170,16 @@ func (dao *SongDAO) getSlugsToReset(params ResetViewsModel) []string {
 }
 
 func (dao *SongDAO) resetSongViews(params ResetViewsModel) error {
+	songCollection := config.Config.Collections["songs"]
+	viewCountCollection := config.Config.Collections["view_count"]
 	slugs := dao.getSlugsToReset(params)
 	for _, slug := range slugs {
-		deletedRows, err := dao.db.DeleteMany("view_count", resetFilterModel(slug, params))
+		deletedRows, err := dao.db.DeleteMany(viewCountCollection, resetFilterModel(slug, params))
 		if err != nil {
 			fmt.Println("Failed to delete song counts", slug)
 			return err
 		}
-		err = dao.db.UpdateOne("songs", bson.M{"slug": slug}, bson.M{"$inc": bson.M{"viewed": deletedRows.DeletedCount * -1}})
+		err = dao.db.UpdateOne(songCollection, bson.M{"slug": slug}, bson.M{"$inc": bson.M{"viewed": deletedRows.DeletedCount * -1}})
 		if err != nil {
 			fmt.Println("Failed to update song", slug)
 			return err
