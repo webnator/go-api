@@ -2,6 +2,7 @@ package songs
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/webnator/capo-music-api/cmd/capo-music/config"
@@ -29,8 +30,11 @@ func queryModel(params map[string]string) bson.M {
 		}
 	}
 	if params["category"] != "" {
-		query["category"] = params["category"]
+		query["category"] = bson.M{
+			"$in": strings.Split(params["category"], ","),
+		}
 	}
+	fmt.Println(query)
 	return query
 }
 
