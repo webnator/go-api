@@ -7,6 +7,7 @@ import (
 
 	"github.com/webnator/capo-music-api/cmd/capo-music/config"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // SongDAO persists user data in database
@@ -20,7 +21,7 @@ func NewSongDAO(dbLib DBLibrary) *SongDAO {
 	return &SongDAO{db}
 }
 
-func queryModel(params map[string]string) bson.M {
+func queryModel(params map[string]string) (bson.M, *options.FindOptions) {
 	query := bson.M{}
 	if params["search"] != "" {
 		query = bson.M{
@@ -34,16 +35,19 @@ func queryModel(params map[string]string) bson.M {
 			"$in": strings.Split(params["category"], ","),
 		}
 	}
-	fmt.Println(query)
-	return query
+
+	opts := options.Find()
+	opts.SetSort(bson.D{{"viewed", -1}})
+
+	return query, opts
 }
 
 func (dao *SongDAO) find(params map[string]string) (*[]SongModel, error) {
 	var songs []SongModel = make([]SongModel, 0)
 
-	query := queryModel(params)
+	query, opts := queryModel(params)
 	songCollection := config.Config.Collections["songs"]
-	results, err := dao.db.Find(songCollection, query)
+	results, err := dao.db.Find(songCollection, query, opts)
 
 	for _, song := range results {
 		var s SongModel = NewSongModel()

@@ -44,11 +44,11 @@ func (dbService *DbService) FindAll(collection string) ([]bson.M, error) {
 	return dbService.Find(collection, bson.M{})
 }
 
-func (dbService *DbService) Find(collection string, query bson.M) ([]bson.M, error) {
+func (dbService *DbService) Find(collection string, query bson.M, opts ...*options.FindOptions) ([]bson.M, error) {
 	coll := dbService.getColl(collection)
 
 	results := []bson.M{}
-	cursor, err := coll.Find(ctx, query)
+	cursor, err := coll.Find(ctx, query, opts[0])
 
 	if err != nil {
 		fmt.Println(err)
