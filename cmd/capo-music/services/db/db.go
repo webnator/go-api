@@ -16,16 +16,18 @@ type DbService struct {
 }
 
 type ConnOptions struct {
-	DBName string
-	Host   string
-	Port   string
+	DBName   string
+	Host     string
+	Port     string
+	User     string
+	Password string
 }
 
 var service *DbService
 
 func Connect(opts ConnOptions) {
 	ctx = context.Background()
-	clientOpts := options.Client().ApplyURI(fmt.Sprintf("mongodb://%s:%s/%s", opts.Host, opts.Port, opts.DBName))
+	clientOpts := options.Client().ApplyURI(fmt.Sprintf("mongodb://%s:%s@%s:%s/%s", opts.User, opts.Password, opts.Host, opts.Port, opts.DBName))
 	client, err := mongo.Connect(ctx, clientOpts)
 	if err != nil {
 		fmt.Println(err)

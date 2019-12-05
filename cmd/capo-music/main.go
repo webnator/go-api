@@ -57,9 +57,11 @@ func main() {
 	}
 
 	db.Connect(db.ConnOptions{
-		DBName: config.Config.DBConfig.DBName,
-		Host:   config.Config.DBConfig.Host,
-		Port:   config.Config.DBConfig.Port,
+		DBName:   config.Config.DBConfig.DBName,
+		Host:     config.Config.DBConfig.Host,
+		Port:     config.Config.DBConfig.Port,
+		User:     config.Config.DBConfig.User,
+		Password: config.Config.DBConfig.Password,
 	})
 
 	router.Run(fmt.Sprintf(":%v", config.Config.ServerPort))
