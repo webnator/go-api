@@ -18,7 +18,7 @@ func LoadConfig() error {
 	}
 
 	Config = appConfig{
-		ServerPort: 8081,
+		ServerPort: getEnvDefault("PORT", 8081),
 		DBConfig: dBConfig{
 			Host:     getEnv("DB_HOST"),
 			Port:     getEnv("DB_PORT"),
@@ -53,4 +53,11 @@ func getEnv(key string) string {
 		return value
 	}
 	panic(fmt.Errorf("Config var not provided: %s", key))
+}
+
+func getEnvDefault(key string, defaultValue string) string {
+	if value, exists := os.LookupEnv(key); exists {
+		return value
+	}
+	return defaultValue
 }
