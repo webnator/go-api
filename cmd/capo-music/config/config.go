@@ -18,7 +18,7 @@ func LoadConfig() error {
 	}
 
 	Config = appConfig{
-		ServerPort: getEnvDefault("PORT", 8081),
+		ServerPort: getEnvDefault("PORT", "8081"),
 		DBConfig: dBConfig{
 			Host:     getEnv("DB_HOST"),
 			Port:     getEnv("DB_PORT"),
@@ -43,7 +43,7 @@ type dBConfig struct {
 }
 type appConfig struct {
 	// the server port. Defaults to 8080
-	ServerPort  int
+	ServerPort  string
 	DBConfig    dBConfig
 	Collections map[string]string
 }
