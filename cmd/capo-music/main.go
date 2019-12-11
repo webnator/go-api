@@ -47,21 +47,21 @@ func main() {
 	v1 := router.Group("/api/v1")
 	{
 		v1.GET("/categories", controllers.GetCategories)
-
-		v1.POST("/songs", controllers.AddSong)
 		v1.GET("/songs", controllers.GetSongs)
 		v1.GET("/songs/:slug", controllers.GetSong)
-		v1.PATCH("/songs/:slug", controllers.UpdateSong)
+		v1.PATCH("/song-views/:slug", controllers.IncreaseSongViews)
 
-		v1.POST("/reset-views", controllers.ResetViews)
+		authorized := v1.Group("/", gin.BasicAuth(gin.Accounts{config.Config.Auth.User: config.Config.Auth.Password}))
+		{
+			authorized.POST("/reset-views", controllers.ResetViews)
+			authorized.POST("/songs", controllers.AddSong)
+			authorized.PATCH("/songs/:slug", controllers.UpdateSong)
+		}
 	}
 
 	db.Connect(db.ConnOptions{
-		DBName:   config.Config.DBConfig.DBName,
-		Host:     config.Config.DBConfig.Host,
-		Port:     config.Config.DBConfig.Port,
-		User:     config.Config.DBConfig.User,
-		Password: config.Config.DBConfig.Password,
+		DBName: config.Config.DBConfig.DBName,
+		URI:    config.Config.DBConfig.URI,
 	})
 
 	router.Run(fmt.Sprintf(":%v", config.Config.ServerPort))

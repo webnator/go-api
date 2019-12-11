@@ -20,11 +20,12 @@ func LoadConfig() error {
 	Config = appConfig{
 		ServerPort: getEnvDefault("PORT", "8081"),
 		DBConfig: dBConfig{
-			Host:     getEnv("DB_HOST"),
-			Port:     getEnv("DB_PORT"),
-			DBName:   getEnv("DB_DATABASE"),
-			User:     getEnv("DB_USER"),
-			Password: getEnv("DB_PASSWORD"),
+			URI:    getEnv("MONGODB_URI"),
+			DBName: getEnv("DB_DATABASE"),
+		},
+		Auth: authConfig{
+			User:     getEnv("USER_NAME"),
+			Password: getEnv("USER_PW"),
 		},
 		Collections: map[string]string{
 			"songs":      "songs",
@@ -35,17 +36,20 @@ func LoadConfig() error {
 }
 
 type dBConfig struct {
-	Host     string
-	Port     string
-	DBName   string
-	User     string
-	Password string
+	URI    string
+	DBName string
 }
 type appConfig struct {
 	// the server port. Defaults to 8080
 	ServerPort  string
 	DBConfig    dBConfig
+	Auth        authConfig
 	Collections map[string]string
+}
+
+type authConfig struct {
+	User     string
+	Password string
 }
 
 func getEnv(key string) string {

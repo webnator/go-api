@@ -108,6 +108,28 @@ func UpdateSong(context *gin.Context) {
 	}
 }
 
+// IncreaseSongViews godoc
+// @Summary Updates the view count of a song
+// @Produce json
+// @Success 201 {object} models.User
+// @Router /songs/:slug [patch]
+func IncreaseSongViews(context *gin.Context) {
+	songService := songs.NewSongService(songs.Deps{DB: db.Service()})
+
+	var song songs.SongViewIncreaseModel
+	if err := context.ShouldBindJSON(&song); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := songService.IncreaseViewCount(context.Param("slug")); err != nil {
+		context.AbortWithStatus(http.StatusBadRequest)
+		log.Println(err)
+	} else {
+		context.JSON(http.StatusCreated, gin.H{})
+	}
+}
+
 // ResetViews godoc
 // @Summary Updates an existing song
 // @Produce json

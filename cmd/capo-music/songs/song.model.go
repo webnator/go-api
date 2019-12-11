@@ -33,6 +33,10 @@ type SongUpdateModel struct {
 	Viewed   int         `json:"viewed" bson:"viewed,omitempty"`
 }
 
+type SongViewIncreaseModel struct {
+	Viewed int `json:"viewed" bson:"viewed"`
+}
+
 type mediaModel struct {
 	AudioLink string `json:"audioLink"`
 	VideoLink string `json:"videoLink"`
